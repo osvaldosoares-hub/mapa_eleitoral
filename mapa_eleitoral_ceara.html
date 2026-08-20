@@ -16,20 +16,16 @@
     <div class="eyebrow">Acesso restrito · Equipe eleitoral</div>
     <h1>Mapa Eleitoral do Ceará</h1>
     <p class="sub">Entre ou crie uma conta para acessar o cadastro de eleitores.</p>
-
     <div class="auth-tabs">
       <button type="button" class="auth-tab active" id="loginTab">Entrar</button>
       <button type="button" class="auth-tab" id="signupTab">Criar conta</button>
     </div>
-
     <form id="authForm">
-        <label for="authUsername">Nome de usuário</label>
-        <input id="authUsername" type="text" autocomplete="username" pattern="[A-Za-z0-9._-]{3,30}" minlength="3" maxlength="30" required />
-
-        <label for="authPassword">Senha</label>
-        <input id="authPassword" type="password" minlength="6" autocomplete="current-password" required />
-
-        <button type="submit" id="authSubmit">Entrar</button>
+      <label for="authUsername">Nome de usuário</label>
+      <input id="authUsername" type="text" autocomplete="username" pattern="[A-Za-z0-9._-]{3,30}" minlength="3" maxlength="30" required />
+      <label for="authPassword">Senha</label>
+      <input id="authPassword" type="password" minlength="6" autocomplete="current-password" required />
+      <button type="submit" id="authSubmit">Entrar</button>
       <div class="msg" id="authMsg"></div>
     </form>
   </div>
@@ -51,47 +47,38 @@
   <div class="card panel">
     <h2>Cadastrar eleitor</h2>
     <p class="sub">Registre o nome e o município onde a pessoa vai votar. O ponto entra no mapa na hora.</p>
-
     <form id="form">
       <label for="nome">Nome</label>
       <input id="nome" type="text" placeholder="Ex: Maria da Silva" required />
-
       <label for="municipio">Município</label>
       <select id="municipio" required></select>
-
       <label for="zona">Zona eleitoral</label>
       <select id="zona" required disabled>
         <option value="">Selecione primeiro o município</option>
       </select>
       <div class="zone-address" id="zoneAddress"></div>
-
       <label for="secao">Seção eleitoral</label>
       <select id="secao" required disabled>
         <option value="">Selecione primeiro a zona</option>
       </select>
       <div class="zone-address" id="sectionAddress"></div>
-
       <label for="bairro">Bairro (opcional)</label>
       <input id="bairro" type="text" placeholder="Ex: Centro" />
-
       <button type="submit" id="submitBtn">Cadastrar</button>
       <div class="msg" id="msg"></div>
     </form>
-
     <div class="note">
       Os dados ficam salvos num banco Supabase próprio deste projeto e são <b>compartilhados</b> com qualquer pessoa que abrir este mapa — pensado para uma equipe cadastrar eleitores em conjunto. Use "Limpar todos os dados" com cuidado.
       <br><br>
       <a href="#" id="resetLink" class="reset-link">Limpar todos os dados cadastrados</a>
     </div>
   </div>
-
   <div>
     <div class="card panel">
       <h2 class="panel-title">Distribuição no estado</h2>
       <p class="sub panel-sub">O tamanho do círculo mostra onde há mais eleitores cadastrados.</p>
       <div id="map"></div>
     </div>
-
     <div class="card panel ranking">
       <h2>Ranking por município</h2>
       <div id="rankingBody"></div>
@@ -104,240 +91,3 @@
 <script src="mapa_eleitoral_ceara.js"></script>
 </body>
 </html>
-  {nome:"Caucaia", lat:-3.7361, lng:-38.6531},
-  {nome:"Juazeiro do Norte", lat:-7.2130, lng:-39.3155},
-  {nome:"Maracanaú", lat:-3.8767, lng:-38.6256},
-  {nome:"Sobral", lat:-3.6880, lng:-40.3499},
-  {nome:"Crato", lat:-7.2340, lng:-39.4097},
-  {nome:"Itapipoca", lat:-3.4942, lng:-39.5786},
-  {nome:"Maranguape", lat:-3.8907, lng:-38.6836},
-  {nome:"Iguatu", lat:-6.3597, lng:-39.2986},
-  {nome:"Quixadá", lat:-4.9714, lng:-39.0158},
-  {nome:"Canindé", lat:-4.3592, lng:-39.3117},
-  {nome:"Aquiraz", lat:-3.9014, lng:-38.3911},
-  {nome:"Pacatuba", lat:-3.9836, lng:-38.6197},
-  {nome:"Crateús", lat:-5.1783, lng:-40.6775},
-  {nome:"Aracati", lat:-4.5619, lng:-37.7697},
-  {nome:"Russas", lat:-4.9397, lng:-37.9758},
-  {nome:"Icó", lat:-6.4030, lng:-38.8586},
-  {nome:"Tianguá", lat:-3.7317, lng:-40.9928},
-  {nome:"Camocim", lat:-2.9022, lng:-40.8408},
-  {nome:"Pacajus", lat:-4.1717, lng:-38.4600},
-  {nome:"Horizonte", lat:-4.0961, lng:-38.4972},
-  {nome:"Eusébio", lat:-3.8905, lng:-38.4514},
-  {nome:"Quixeramobim", lat:-5.1994, lng:-39.2919},
-  {nome:"Limoeiro do Norte", lat:-5.1478, lng:-38.0942},
-  {nome:"Barbalha", lat:-7.3081, lng:-39.3019},
-  {nome:"Missão Velha", lat:-7.2381, lng:-39.1444},
-  {nome:"Baturité", lat:-4.3283, lng:-38.8814},
-  {nome:"Beberibe", lat:-4.1789, lng:-38.1319},
-  {nome:"Cascavel", lat:-4.1319, lng:-38.2361},
-  {nome:"Trairi", lat:-3.2758, lng:-39.2681},
-  {nome:"Cariré", lat:-3.9531, lng:-40.4708},
-  {nome:"Chorozinho", lat:-4.1439, lng:-38.5044},
-  {nome:"Itapajé", lat:-3.6839, lng:-39.5814},
-  {nome:"Pentecoste", lat:-3.7936, lng:-39.2686},
-  {nome:"Boa Viagem", lat:-5.1264, lng:-39.7325},
-  {nome:"Acaraú", lat:-2.8858, lng:-40.1200},
-  {nome:"Granja", lat:-3.1233, lng:-40.8283},
-  {nome:"Jaguaribe", lat:-5.8908, lng:-38.6111},
-  {nome:"Morada Nova", lat:-5.1103, lng:-38.3733},
-  {nome:"Tauá", lat:-6.0011, lng:-40.2953},
-  {nome:"Cedro", lat:-6.5589, lng:-39.0700},
-  {nome:"Brejo Santo", lat:-7.4906, lng:-38.9861},
-  {nome:"Milagres", lat:-7.3006, lng:-38.9403},
-  {nome:"Ipu", lat:-4.3231, lng:-40.7139}
-].sort((a,b)=>a.nome.localeCompare(b.nome, 'pt-BR'));
-
-const SUPABASE_URL = "https://yltpueiwpvpuzmeasiax.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_l4jw8pK8WbyfnGgZdIc4IQ_ny5n-mLv";
-const TABLE = "registros_eleitores";
-
-let registros = [];
-let map, markersLayer;
-
-async function supabaseFetch(path, options = {}) {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-    ...options,
-    headers: {
-      "apikey": SUPABASE_ANON_KEY,
-      "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
-      "Content-Type": "application/json",
-      "Prefer": options.prefer || "return=representation",
-      ...(options.headers || {})
-    }
-  });
-  if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    throw new Error(`Supabase error ${res.status}: ${text}`);
-  }
-  if (res.status === 204) return null;
-  return res.json();
-}
-
-function initMap(){
-  map = L.map('map', {scrollWheelZoom:false}).setView([-5.1, -39.3], 7);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution:'&copy; OpenStreetMap',
-    maxZoom: 12
-  }).addTo(map);
-  markersLayer = L.layerGroup().addTo(map);
-}
-
-function populateSelect(){
-  const sel = document.getElementById('municipio');
-  sel.innerHTML = '<option value="" disabled selected>Selecione o município</option>' +
-    MUNICIPIOS.map(m => `<option value="${m.nome}">${m.nome}</option>`).join('');
-}
-
-async function loadRegistros(){
-  try{
-    registros = await supabaseFetch(`${TABLE}?select=id,nome,municipio,bairro,created_at&order=created_at.desc`);
-  }catch(e){
-    console.error(e);
-    registros = [];
-  }
-  render();
-}
-
-async function insertRegistro(registro){
-  try{
-    const result = await supabaseFetch(TABLE, {
-      method: "POST",
-      body: JSON.stringify(registro)
-    });
-    return result && result[0] ? result[0] : null;
-  }catch(e){
-    console.error(e);
-    return null;
-  }
-}
-
-async function deleteAllRegistros(){
-  try{
-    await supabaseFetch(`${TABLE}?id=neq.00000000-0000-0000-0000-000000000000`, {
-      method: "DELETE",
-      prefer: "return=minimal"
-    });
-    return true;
-  }catch(e){
-    console.error(e);
-    return false;
-  }
-}
-
-function countsByMunicipio(){
-  const counts = {};
-  registros.forEach(r => {
-    counts[r.municipio] = (counts[r.municipio] || 0) + 1;
-  });
-  return counts;
-}
-
-function render(){
-  document.getElementById('totalCount').textContent = registros.length;
-  renderMap();
-  renderRanking();
-}
-
-function renderMap(){
-  markersLayer.clearLayers();
-  const counts = countsByMunicipio();
-  const max = Math.max(1, ...Object.values(counts));
-
-  MUNICIPIOS.forEach(m => {
-    const c = counts[m.nome] || 0;
-    if(c === 0) return;
-    const radius = 6 + (c / max) * 26;
-    const marker = L.circleMarker([m.lat, m.lng], {
-      radius: radius,
-      color: '#8A3B2E',
-      weight: 1,
-      fillColor: '#B98327',
-      fillOpacity: 0.55
-    }).addTo(markersLayer);
-    marker.bindPopup(`<b>${m.nome}</b><br>${c} eleitor${c>1?'es':''} cadastrado${c>1?'s':''}`);
-  });
-}
-
-function renderRanking(){
-  const counts = countsByMunicipio();
-  const body = document.getElementById('rankingBody');
-  const entries = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
-
-  if(entries.length === 0){
-    body.innerHTML = '<div class="empty">Nenhum eleitor cadastrado ainda. Use o formulário ao lado para começar.</div>';
-    return;
-  }
-
-  const max = entries[0][1];
-  body.innerHTML = `
-    <table>
-      <thead><tr><th>Município</th><th>Eleitores</th></tr></thead>
-      <tbody>
-        ${entries.map(([nome, c]) => `
-          <tr>
-            <td>
-              ${nome}
-              <div class="bar-wrap"><div class="bar" style="width:${(c/max*100).toFixed(0)}%"></div></div>
-            </td>
-            <td class="num">${c}</td>
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>
-  `;
-}
-
-document.getElementById('form').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const nome = document.getElementById('nome').value.trim();
-  const municipio = document.getElementById('municipio').value;
-  const bairro = document.getElementById('bairro').value.trim();
-  const msg = document.getElementById('msg');
-  const btn = document.getElementById('submitBtn');
-
-  if(!nome || !municipio){
-    msg.textContent = 'Preencha nome e município.';
-    msg.className = 'msg err';
-    return;
-  }
-
-  btn.disabled = true;
-  msg.textContent = 'Salvando...';
-  msg.className = 'msg';
-
-  const novo = await insertRegistro({ nome, municipio, bairro: bairro || null });
-  btn.disabled = false;
-
-  if(novo){
-    registros.unshift(novo);
-    msg.textContent = `Cadastrado: ${nome} — ${municipio}`;
-    msg.className = 'msg ok';
-    document.getElementById('form').reset();
-    render();
-  }else{
-    msg.textContent = 'Erro ao salvar. Tente novamente.';
-    msg.className = 'msg err';
-  }
-});
-
-document.getElementById('resetLink').addEventListener('click', async (e) => {
-  e.preventDefault();
-  if(!confirm('Isso vai apagar TODOS os cadastros salvos no banco. Confirma?')) return;
-  const ok = await deleteAllRegistros();
-  if(ok){
-    registros = [];
-    render();
-  }else{
-    alert('Erro ao limpar os dados. Tente novamente.');
-  }
-});
-
-initMap();
-populateSelect();
-loadRegistros();
-</script>
-</body>
-</html>
--->
