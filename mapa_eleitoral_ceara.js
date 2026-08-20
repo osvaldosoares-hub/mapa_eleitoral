@@ -45,29 +45,103 @@ const MUNICIPIOS = [
   {nome:"Ipu", lat:-4.3231, lng:-40.7139}
 ].sort((a,b)=>a.nome.localeCompare(b.nome, 'pt-BR'));
 
-const SUPABASE_URL = "https://yltpueiwpvpuzmeasiax.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_l4jw8pK8WbyfnGgZdIc4IQ_ny5n-mLv";
 const TABLE = "registros_eleitores";
 
 let registros = [];
 let map, markersLayer;
 let zonasEleitorais = [];
 let secoesEleitorais = [];
+let authMode = 'login';
+
+function setAuthMessage(message, type = ''){
+  const element = document.getElementById('authMsg');
+  element.textContent = message;
+  element.className = `msg ${type}`.trim();
+}
+
+function setAuthMode(mode){
+  authMode = mode;
+  const isSignup = mode === 'signup';
+  document.getElementById('loginTab').classList.toggle('active', !isSignup);
+  document.getElementById('signupTab').classList.toggle('active', isSignup);
+  document.getElementById('authSubmit').textContent = isSignup ? 'Criar conta' : 'Entrar';
+  document.getElementById('authPassword').autocomplete = isSignup ? 'new-password' : 'current-password';
+  setAuthMessage('');
+}
+
+function showProtectedApp(){
+  document.getElementById('authScreen').hidden = true;
+  document.getElementById('protectedApp').hidden = false;
+  initMap();
+  populateSelect();
+  loadZonasEleitorais().then(() => {
+    document.getElementById('municipio').dispatchEvent(new Event('change'));
+    loadRegistros();
+  });
+}
+
+async function showAuthScreen(){
+  await fetch('/api/auth', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({action:'logout'})});
+  document.getElementById('protectedApp').hidden = true;
+  document.getElementById('authScreen').hidden = false;
+}
+
+async function handleAuthSubmit(event){
+  event.preventDefault();
+  const username = document.getElementById('authUsername').value.trim();
+  const password = document.getElementById('authPassword').value;
+  const button = document.getElementById('authSubmit');
+
+  if(!/^[A-Za-z0-9._-]{3,50}$/.test(username)){
+    setAuthMessage('Use de 3 a 50 caracteres: letras, números, ponto, hífen ou sublinhado.', 'err');
+    return;
+  }
+  button.disabled = true;
+  setAuthMessage(authMode === 'signup' ? 'Criando conta...' : 'Entrando...');
+  try{
+    const response = await fetch('/api/auth', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action: authMode === 'signup' ? 'register' : 'login', username, password})
+    });
+    const data = await response.json().catch(() => ({}));
+    if(!response.ok){
+      if(response.status === 405){
+        throw new Error('A API não está ativa neste servidor. Execute "npx vercel dev" e abra a URL informada pela Vercel.');
+      }
+      throw new Error(data.error || 'Não foi possível autenticar.');
+    }
+    showProtectedApp(data);
+  }catch(error){
+    setAuthMessage(error.message, 'err');
+  }finally{
+    button.disabled = false;
+  }
+}
+
+function initAuthentication(){
+  document.getElementById('loginTab').addEventListener('click', () => setAuthMode('login'));
+  document.getElementById('signupTab').addEventListener('click', () => setAuthMode('signup'));
+  document.getElementById('authForm').addEventListener('submit', handleAuthSubmit);
+  document.getElementById('logoutButton').addEventListener('click', showAuthScreen);
+  fetch('/api/auth', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({action:'me'})})
+    .then(response => response.ok ? response.json() : null)
+    .then(session => session ? showProtectedApp(session) : (document.getElementById('authScreen').hidden = false));
+}
 
 async function supabaseFetch(path, options = {}) {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-    ...options,
-    headers: {
-      "apikey": SUPABASE_ANON_KEY,
-      "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
-      "Content-Type": "application/json",
-      "Prefer": options.prefer || "return=representation",
-      ...(options.headers || {})
-    }
+  const headers = {
+    "Content-Type": "application/json",
+    ...(options.prefer ? {Prefer: options.prefer} : {})
+  };
+  const res = await fetch(`/api/data?path=${encodeURIComponent(path)}`, {
+    method: options.method || 'GET',
+    headers,
+    body: options.method && options.method !== 'GET' ? options.body : undefined
   });
   if (!res.ok) {
     const text = await res.text().catch(() => "");
-    throw new Error(`Supabase error ${res.status}: ${text}`);
+    throw new Error(`Database error ${res.status}: ${text}`);
   }
   if (res.status === 204) return null;
   return res.json();
@@ -387,9 +461,4 @@ document.getElementById('resetLink').addEventListener('click', async (e) => {
   }
 });
 
-initMap();
-populateSelect();
-loadZonasEleitorais().then(() => {
-  document.getElementById('municipio').dispatchEvent(new Event('change'));
-  loadRegistros();
-});
+initAuthentication();

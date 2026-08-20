@@ -19,6 +19,51 @@ body{
   color:var(--ink);
   font-family:'Inter', sans-serif;
 }
+.auth-screen{
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  padding:24px;
+}
+.auth-panel{
+  width:min(100%, 430px);
+  padding:32px;
+  background:var(--card);
+  border:1px solid var(--line);
+  box-shadow:8px 8px 0 var(--paper-dark);
+}
+.auth-panel h1{
+  font-family:'Fraunces', serif;
+  font-size:32px;
+  margin:8px 0 6px;
+}
+.auth-panel .sub{margin:0 0 22px;}
+.auth-tabs{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  border-bottom:1px solid var(--line);
+  margin-bottom:18px;
+}
+.auth-tab{
+  margin:0;
+  padding:10px 8px;
+  background:transparent;
+  color:var(--ink-soft);
+  border-bottom:2px solid transparent;
+}
+.auth-tab:hover,.auth-tab.active{
+  background:transparent;
+  color:var(--ink);
+  border-bottom-color:var(--brick);
+}
+.protected-app[hidden],.auth-screen[hidden]{display:none;}
+.header-actions{display:flex;align-items:flex-end;gap:18px;}
+.logout-button{width:auto;margin:0;padding:8px 12px;font-size:10px;}
+@media (max-width: 560px){
+  .auth-panel{padding:24px;}
+  .header-actions{align-items:flex-start;}
+}
 header{
   padding: 28px 32px 18px;
   border-bottom: 2px solid var(--ink);

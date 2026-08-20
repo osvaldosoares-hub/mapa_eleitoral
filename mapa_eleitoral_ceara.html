@@ -11,12 +11,40 @@
 </head>
 <body>
 
+<section class="auth-screen" id="authScreen">
+  <div class="auth-panel">
+    <div class="eyebrow">Acesso restrito · Equipe eleitoral</div>
+    <h1>Mapa Eleitoral do Ceará</h1>
+    <p class="sub">Entre ou crie uma conta para acessar o cadastro de eleitores.</p>
+
+    <div class="auth-tabs">
+      <button type="button" class="auth-tab active" id="loginTab">Entrar</button>
+      <button type="button" class="auth-tab" id="signupTab">Criar conta</button>
+    </div>
+
+    <form id="authForm">
+        <label for="authUsername">Nome de usuário</label>
+        <input id="authUsername" type="text" autocomplete="username" pattern="[A-Za-z0-9._-]{3,30}" minlength="3" maxlength="30" required />
+
+        <label for="authPassword">Senha</label>
+        <input id="authPassword" type="password" minlength="6" autocomplete="current-password" required />
+
+        <button type="submit" id="authSubmit">Entrar</button>
+      <div class="msg" id="authMsg"></div>
+    </form>
+  </div>
+</section>
+
+<div class="protected-app" id="protectedApp" hidden>
 <header>
   <div>
     <div class="eyebrow">Levantamento de campo · Estado do Ceará</div>
     <h1>Mapa Eleitoral do Ceará</h1>
   </div>
-  <div class="stat">Eleitores cadastrados<b id="totalCount">0</b></div>
+  <div class="header-actions">
+    <div class="stat">Eleitores cadastrados<b id="totalCount">0</b></div>
+    <button type="button" class="logout-button" id="logoutButton">Sair</button>
+  </div>
 </header>
 
 <main>
@@ -70,13 +98,12 @@
     </div>
   </div>
 </main>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="mapa_eleitoral_ceara.js"></script>
 </body>
 </html>
-<!--
-  {nome:"Fortaleza", lat:-3.7172, lng:-38.5433},
   {nome:"Caucaia", lat:-3.7361, lng:-38.6531},
   {nome:"Juazeiro do Norte", lat:-7.2130, lng:-39.3155},
   {nome:"Maracanaú", lat:-3.8767, lng:-38.6256},
