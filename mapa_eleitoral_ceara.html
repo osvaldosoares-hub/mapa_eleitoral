@@ -31,7 +31,19 @@
       <label for="municipio">Município</label>
       <select id="municipio" required></select>
 
-      <label for="bairro">Bairro / zona (opcional)</label>
+      <label for="zona">Zona eleitoral</label>
+      <select id="zona" required disabled>
+        <option value="">Selecione primeiro o município</option>
+      </select>
+      <div class="zone-address" id="zoneAddress"></div>
+
+      <label for="secao">Seção eleitoral</label>
+      <select id="secao" required disabled>
+        <option value="">Selecione primeiro a zona</option>
+      </select>
+      <div class="zone-address" id="sectionAddress"></div>
+
+      <label for="bairro">Bairro (opcional)</label>
       <input id="bairro" type="text" placeholder="Ex: Centro" />
 
       <button type="submit" id="submitBtn">Cadastrar</button>

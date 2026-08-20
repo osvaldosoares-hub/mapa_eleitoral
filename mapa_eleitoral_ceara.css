@@ -147,6 +147,13 @@ button:disabled{opacity:0.5; cursor:default;}
   line-height:1.5;
 }
 .reset-link{color:var(--brick);}
+.zone-address{
+  min-height:18px;
+  margin-top:6px;
+  color:var(--ink-soft);
+  font-size:11px;
+  line-height:1.4;
+}
 #map{
   height: 560px;
   width:100%;

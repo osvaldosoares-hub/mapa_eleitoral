@@ -51,6 +51,8 @@ const TABLE = "registros_eleitores";
 
 let registros = [];
 let map, markersLayer;
+let zonasEleitorais = [];
+let secoesEleitorais = [];
 
 async function supabaseFetch(path, options = {}) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
@@ -84,11 +86,164 @@ function populateSelect(){
   const sel = document.getElementById('municipio');
   sel.innerHTML = '<option value="" disabled selected>Selecione o município</option>' +
     MUNICIPIOS.map(m => `<option value="${m.nome}">${m.nome}</option>`).join('');
+  sel.addEventListener('change', populateZonaSelect);
+}
+
+function normalizeText(value){
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase()
+    .trim();
+}
+
+function parseCsvLine(line){
+  const fields = [];
+  const pattern = /(?:^|,)\s*(?:"([^"]*(?:""[^"]*)*)"|([^,]*))/g;
+  let match;
+  while((match = pattern.exec(line)) !== null){
+    fields.push((match[1] ?? match[2] ?? '').replace(/""/g, '"').trim());
+  }
+  return fields;
+}
+
+async function loadZonasEleitorais(){
+  try{
+    const response = await fetch('export.csv');
+    if(!response.ok) throw new Error(`CSV error ${response.status}`);
+    const csv = await response.text();
+    const lines = csv.split(/\r?\n/);
+    const zonas = [];
+    const secoes = [];
+    let zonaAtual = null;
+    let localAtual = null;
+    let lendoSecoes = false;
+
+    for(let index = 0; index < lines.length - 1; index++){
+      const line = lines[index];
+      if(/^ZONA\s*,\s*MUNIC/i.test(line)){
+        const fields = parseCsvLine(lines[index + 1]);
+        const zoneNumber = fields[0]?.match(/\d+/)?.[0];
+        const municipalities = fields[1]
+          ?.split('/')
+          .map(municipality => municipality.replace(/\(SEDE\)/i, '').trim())
+          .filter(Boolean);
+        if(!zoneNumber || !municipalities?.length) continue;
+
+        zonaAtual = {
+          zona: zoneNumber.padStart(3, '0'),
+          municipios: municipalities
+        };
+        localAtual = null;
+        lendoSecoes = false;
+
+        municipalities.forEach(municipio => {
+          zonas.push({
+            zona: zonaAtual.zona,
+            municipio,
+            endereco: fields[4] || '',
+            cep: fields[5] || ''
+          });
+        });
+        continue;
+      }
+
+      if(/^C.*LOCAL,ZONA\/MUNICIPIO/i.test(line)){
+        const fields = parseCsvLine(lines[index + 1]);
+        const localMunicipios = fields[1]?.split('/').slice(1)
+          .map(municipio => municipio.replace(/\(SEDE\)/i, '').trim())
+          .filter(Boolean);
+        localAtual = {
+          municipios: localMunicipios?.length ? localMunicipios : (zonaAtual?.municipios || []),
+          local: fields[2] || '',
+          endereco: fields[3] || ''
+        };
+        lendoSecoes = false;
+        continue;
+      }
+
+      if(/^SE.*\bAPTOS/i.test(line)){
+        lendoSecoes = true;
+        continue;
+      }
+
+      if(!lendoSecoes || !zonaAtual || !localAtual) continue;
+      const sectionFields = parseCsvLine(line);
+      if(!/^\d+$/.test(sectionFields[0] || '') || !/^\d+$/.test(sectionFields[1] || '')) continue;
+
+      localAtual.municipios.forEach(municipio => {
+        secoes.push({
+          zona: zonaAtual.zona,
+          municipio,
+          secao: sectionFields[0],
+          aptos: sectionFields[1],
+          local: localAtual.local,
+          endereco: localAtual.endereco
+        });
+      });
+    }
+
+    zonasEleitorais = zonas.filter((zona, index, all) =>
+      all.findIndex(item => item.zona === zona.zona &&
+        normalizeText(item.municipio) === normalizeText(zona.municipio)) === index
+    );
+    secoesEleitorais = secoes.filter((secao, index, all) =>
+      all.findIndex(item => item.zona === secao.zona &&
+        item.secao === secao.secao &&
+        normalizeText(item.municipio) === normalizeText(secao.municipio)) === index
+    );
+  }catch(error){
+    console.error('Não foi possível carregar as zonas eleitorais:', error);
+    zonasEleitorais = [];
+    secoesEleitorais = [];
+  }
+}
+
+function populateZonaSelect(){
+  const municipio = document.getElementById('municipio').value;
+  const zonaSelect = document.getElementById('zona');
+  const sectionSelect = document.getElementById('secao');
+  const address = document.getElementById('zoneAddress');
+  const sectionAddress = document.getElementById('sectionAddress');
+  const zonas = zonasEleitorais.filter(zona =>
+    normalizeText(zona.municipio) === normalizeText(municipio)
+  );
+
+  zonaSelect.disabled = zonas.length === 0;
+  zonaSelect.innerHTML = zonas.length
+    ? '<option value="" disabled selected>Selecione a zona eleitoral</option>' +
+      zonas.map(zona => `<option value="${zona.zona}">${zona.zona}ª Zona Eleitoral</option>`).join('')
+    : '<option value="">Zona não encontrada no CSV</option>';
+  address.textContent = '';
+  sectionSelect.disabled = true;
+  sectionSelect.innerHTML = '<option value="">Selecione primeiro a zona</option>';
+  sectionAddress.textContent = '';
+  zonaSelect.onchange = () => {
+    const selected = zonas.find(zona => zona.zona === zonaSelect.value);
+    address.textContent = selected
+      ? `Endereço: ${selected.endereco}${selected.cep ? ` · CEP: ${selected.cep}` : ''}`
+      : '';
+    const secoes = secoesEleitorais.filter(secao =>
+      secao.zona === zonaSelect.value &&
+      normalizeText(secao.municipio) === normalizeText(municipio)
+    );
+    sectionSelect.disabled = secoes.length === 0;
+    sectionSelect.innerHTML = secoes.length
+      ? '<option value="" disabled selected>Selecione a seção eleitoral</option>' +
+        secoes.map(secao => `<option value="${secao.secao}">Seção ${secao.secao}</option>`).join('')
+      : '<option value="">Seção não encontrada no CSV</option>';
+    sectionSelect.onchange = () => {
+      const selectedSection = secoes.find(secao => secao.secao === sectionSelect.value);
+      sectionAddress.textContent = selectedSection
+        ? `Local: ${selectedSection.local} · ${selectedSection.endereco} · Eleitores: ${selectedSection.aptos}`
+        : '';
+    };
+  };
 }
 
 async function loadRegistros(){
   try{
-    registros = await supabaseFetch(`${TABLE}?select=id,nome,municipio,bairro,created_at&order=created_at.desc`);
+    registros = await supabaseFetch(`${TABLE}?select=id,nome,municipio,zona,secao,bairro,created_at&order=created_at.desc`);
   }catch(e){
     console.error(e);
     registros = [];
@@ -189,12 +344,14 @@ document.getElementById('form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const nome = document.getElementById('nome').value.trim();
   const municipio = document.getElementById('municipio').value;
+  const zona = document.getElementById('zona').value;
+  const secao = document.getElementById('secao').value;
   const bairro = document.getElementById('bairro').value.trim();
   const msg = document.getElementById('msg');
   const btn = document.getElementById('submitBtn');
 
-  if(!nome || !municipio){
-    msg.textContent = 'Preencha nome e município.';
+  if(!nome || !municipio || !zona || !secao){
+    msg.textContent = 'Preencha nome, município, zona e seção eleitoral.';
     msg.className = 'msg err';
     return;
   }
@@ -203,12 +360,12 @@ document.getElementById('form').addEventListener('submit', async (e) => {
   msg.textContent = 'Salvando...';
   msg.className = 'msg';
 
-  const novo = await insertRegistro({ nome, municipio, bairro: bairro || null });
+  const novo = await insertRegistro({ nome, municipio, zona, secao, bairro: bairro || null });
   btn.disabled = false;
 
   if(novo){
     registros.unshift(novo);
-    msg.textContent = `Cadastrado: ${nome} — ${municipio}`;
+    msg.textContent = `Cadastrado: ${nome} — ${municipio}, zona ${zona}`;
     msg.className = 'msg ok';
     document.getElementById('form').reset();
     render();
@@ -232,4 +389,7 @@ document.getElementById('resetLink').addEventListener('click', async (e) => {
 
 initMap();
 populateSelect();
-loadRegistros();
+loadZonasEleitorais().then(() => {
+  document.getElementById('municipio').dispatchEvent(new Event('change'));
+  loadRegistros();
+});
