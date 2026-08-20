@@ -1,0 +1,208 @@
+:root{
+  --paper: #EDE7D6;
+  --paper-dark: #E2DAC2;
+  --ink: #24333A;
+  --ink-soft: #55625F;
+  --ochre: #B98327;
+  --brick: #8A3B2E;
+  --line: #C9BE9D;
+  --card: #F6F2E6;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--paper);
+  background-image:
+    linear-gradient(var(--paper-dark) 1px, transparent 1px),
+    linear-gradient(90deg, var(--paper-dark) 1px, transparent 1px);
+  background-size: 28px 28px;
+  color:var(--ink);
+  font-family:'Inter', sans-serif;
+}
+header{
+  padding: 28px 32px 18px;
+  border-bottom: 2px solid var(--ink);
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  flex-wrap:wrap;
+  gap:12px;
+}
+header h1{
+  font-family:'Fraunces', serif;
+  font-weight:700;
+  font-size: 30px;
+  margin:0;
+  letter-spacing:-0.01em;
+}
+header .eyebrow{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:11px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--brick);
+  margin-bottom:4px;
+}
+header .stat{
+  font-family:'IBM Plex Mono', monospace;
+  text-align:right;
+  font-size:12px;
+  color:var(--ink-soft);
+}
+header .stat b{
+  display:block;
+  font-family:'Fraunces', serif;
+  font-size:26px;
+  color:var(--ink);
+  font-weight:600;
+}
+main{
+  display:grid;
+  grid-template-columns: 340px 1fr;
+  gap:24px;
+  padding: 24px 32px 40px;
+  align-items:start;
+}
+@media (max-width: 880px){
+  main{grid-template-columns: 1fr;}
+}
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:2px;
+  box-shadow: 0 1px 0 var(--line);
+}
+.panel{
+  padding:20px;
+}
+.panel h2{
+  font-family:'Fraunces', serif;
+  font-size:16px;
+  margin:0 0 4px;
+}
+.panel .sub{
+  font-size:12px;
+  color:var(--ink-soft);
+  margin:0 0 16px;
+  line-height:1.5;
+}
+.panel-title{
+  font-family:'Fraunces',serif;
+  font-size:16px;
+  margin:0 0 4px;
+}
+.panel-sub{margin-bottom:14px !important;}
+label{
+  display:block;
+  font-family:'IBM Plex Mono', monospace;
+  font-size:10.5px;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  color:var(--ink-soft);
+  margin: 14px 0 6px;
+}
+input, select{
+  width:100%;
+  padding:9px 10px;
+  border:1px solid var(--line);
+  background:#fff;
+  font-family:'Inter', sans-serif;
+  font-size:14px;
+  color:var(--ink);
+  border-radius:1px;
+}
+input:focus, select:focus{
+  outline:2px solid var(--ochre);
+  outline-offset:1px;
+}
+button{
+  margin-top:18px;
+  width:100%;
+  padding:11px;
+  background:var(--ink);
+  color:var(--paper);
+  border:none;
+  font-family:'IBM Plex Mono', monospace;
+  font-size:12px;
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+  cursor:pointer;
+  border-radius:1px;
+}
+button:hover{background:var(--brick);}
+button:disabled{opacity:0.5; cursor:default;}
+.msg{
+  margin-top:10px;
+  font-size:12.5px;
+  font-family:'IBM Plex Mono', monospace;
+}
+.msg.ok{color:#3E6B4D;}
+.msg.err{color:var(--brick);}
+.note{
+  margin-top:16px;
+  padding-top:14px;
+  border-top:1px dashed var(--line);
+  font-size:11px;
+  color:var(--ink-soft);
+  line-height:1.5;
+}
+.reset-link{color:var(--brick);}
+#map{
+  height: 560px;
+  width:100%;
+  border:1px solid var(--line);
+  filter: saturate(0.85);
+}
+.ranking{
+  margin-top:24px;
+}
+.ranking h2{
+  font-family:'Fraunces', serif;
+  font-size:16px;
+  margin:0 0 14px;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+}
+th{
+  text-align:left;
+  font-family:'IBM Plex Mono', monospace;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  color:var(--ink-soft);
+  padding: 6px 8px;
+  border-bottom:1px solid var(--ink);
+}
+td{
+  padding:8px;
+  border-bottom:1px solid var(--line);
+}
+td.num{
+  font-family:'IBM Plex Mono', monospace;
+  text-align:right;
+}
+.bar-wrap{
+  background: var(--paper-dark);
+  height:6px;
+  border-radius:3px;
+  overflow:hidden;
+  margin-top:4px;
+}
+.bar{
+  height:100%;
+  background: var(--brick);
+}
+.empty{
+  padding:24px;
+  text-align:center;
+  color:var(--ink-soft);
+  font-size:13px;
+}
+.leaflet-popup-content{
+  font-family:'Inter', sans-serif;
+  font-size:13px;
+}
+.leaflet-popup-content b{font-family:'Fraunces', serif;}
